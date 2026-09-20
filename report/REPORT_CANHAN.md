@@ -2,7 +2,7 @@
 
 **Họ tên:** Nguyễn Tiến Phát
 **Nhóm:** 3Kings
-**Ngày:** 20/10/2026
+**Ngày:** 2026-09-20
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
@@ -167,12 +167,12 @@ Cấu hình: chiến lược **Heading/Section chunker** (`max_chars=800`, bread
 
 **Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **5 / 5** (chấm theo nội dung/marker: Q2, Q3, Q5 ở top-1; Q4 ở top-2; Q1 ở top-3) → theo rubric `docs/SCORING.md`: 2+2+2+1+1 = **8 / 10**. Chấm "ngây thơ" theo doc_id thì 5/5 câu đều top-1 (10/10) — khoảng cách 2 điểm giữa hai cách chấm là phát hiện chính của tôi: với chunker theo heading, các mục trong **cùng một file** có điểm cosine gần như nhau (Q1: 0.839/0.836/0.833), nên file đúng luôn thắng nhưng *mục* đúng không chắc ở top-1.
 
-So sánh cùng corpus, cùng 5 query, cùng embedder, chỉ đổi chunker (tôi chạy cả 4 để có số liệu đối chiếu cho nhóm — file `report/benchmark_runs/*.txt`):
+So sánh cùng corpus, cùng 5 query, cùng embedder `gemini-embedding-001`, chỉ đổi chunker — đây là **run đối chứng do tôi chạy** (file `report/benchmark_runs/*.txt`), nhãn Sang/Hoàng chỉ tên chiến lược được phân công, không phải run cá nhân của họ (run riêng của Sang dùng 600/100, của Hoàng dùng Recursive 650 — xem `REPORT_NHOM.md`):
 
 | Chiến lược | Số chunk | Avg ký tự | Q1 | Q2 | Q3 | Q4 | Q5 | Tổng |
 |---|---|---|---|---|---|---|---|---|
-| FixedSize 700 / overlap 100 (Sang) | 43 | 652 | 2 | 2 | 2 | 2 | 2 | **10/10** |
-| Recursive 600 (Hoàng) | 52 | 472 | 1 | 2 | 2 | 1 | 2 | 8/10 |
+| FixedSize 700 / overlap 100 (chiến lược của Sang) | 43 | 652 | 2 | 2 | 2 | 2 | 2 | **10/10** |
+| Recursive 600 (chiến lược của Hoàng) | 52 | 472 | 1 | 2 | 2 | 1 | 2 | 8/10 |
 | **Heading/Section 800 (Phát)** | 54 | 484 | 1 | 2 | 2 | 1 | 2 | 8/10 |
 | Sentence 4 câu | 101 | 241 | 1 | 2 | 2 | 0 | 2 | 7/10 |
 | *Đối chứng:* FixedSize 500 / overlap 50 | 57 | 473 | 2 | 2 | 2 | 1 | 2 | 9/10 |
