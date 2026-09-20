@@ -1,0 +1,115 @@
+=== BENCHMARK — Phát (R3) ===
+strategy : heading  (HeadingChunker, {'max_chars': 800, 'breadcrumb': True})
+embedder : gemini-embedding-001
+llm      : stub
+corpus   : 9 tài liệu → 54 chunk (avg 484 ký tự/chunk)
+           buyer-estimated-delivery       4 chunk
+           buyer-help-order               4 chunk
+           buyer-open-case                8 chunk
+           buyer-purchase-protection      5 chunk
+           seller-issue-refund            8 chunk
+           seller-purchase-protection     5 chunk
+           seller-resolve-case            8 chunk
+           seller-returns-refunds         5 chunk
+           seller-set-return-policy       7 chunk
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Q1 [condition] What conditions must be met before a buyer can open a case on Etsy?
+   gold: To open a case, the estimated delivery date for the order must have passed and at least 48 hours must have passed since the buyer sent the seller a Help with order request.
+
+   ▶ run: audience=buyer   (tính điểm)
+     1. score=+0.839  buyer-open-case#1                doc=buyer-open-case             aud=buyer
+        “How to Open a Case › How to open a case 1. Sign in to Etsy.com and go to Your account. On the Etsy app, sign i…”
+     2. score=+0.836  buyer-open-case#5                doc=buyer-open-case             aud=buyer
+        “How to Open a Case › How Etsy will help Etsy works with the buyer and seller to collect information and reach …”
+     3. score=+0.833  buyer-open-case#3                doc=buyer-open-case             aud=buyer
+        “How to Open a Case › When can I open a case? For physical items and digital items ready for immediate download…”
+     chấm doc-level (doc_id gold): top-1   |   content-level (marker ['48 hours']): top-3   →  1/2 điểm
+     agent: [stub-LLM — trích nguyên văn đoạn [1], nguồn buyer-open-case, audience=buyer] How to Open a Case › How to open a case 1. Sign in to Etsy.com and go to Your account. On the Etsy app, sign in and tap You. 2. Go to Purchases and reviews. 3. Select Help with order next to the order. On the Etsy app, t…
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Q2 [procedure] How does a seller work with a buyer to resolve an open Etsy case through Shop Manager?
+   gold: The seller uses Cases in Shop Manager, selects the applicable case, and communicates through Add Your Comment in the case log.
+
+   ▶ run: audience=seller   (tính điểm)
+     1. score=+0.901  seller-resolve-case#5            doc=seller-resolve-case         aud=seller
+        “How to Resolve a Case from a Buyer › How do I work with my buyer to resolve the case? If the case is open, wor…”
+     2. score=+0.803  seller-resolve-case#0            doc=seller-resolve-case         aud=seller
+        “How to Resolve a Case from a Buyer Cases indicate that a buyer has an unresolved issue with an order. A case d…”
+     3. score=+0.802  seller-resolve-case#3            doc=seller-resolve-case         aud=seller
+        “How to Resolve a Case from a Buyer › How to resolve a case Etsy reviews the order and makes a resolution. If t…”
+     chấm doc-level (doc_id gold): top-1   |   content-level (marker ['Shop Manager']): top-1   →  2/2 điểm
+     agent: [stub-LLM — trích nguyên văn đoạn [1], nguồn seller-resolve-case, audience=seller] How to Resolve a Case from a Buyer › How do I work with my buyer to resolve the case? If the case is open, work with the buyer through Cases in Shop Manager. 1. Sign in to Etsy.com and go to Shop Manager. 2. Go to Hel…
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Q3 [list + A/B metadata filter (BẮT BUỘC 3 lần)] How much refund does Etsy Purchase Protection provide for a qualifying order?
+   gold: BUYER: full refund for qualifying orders when an item doesn't arrive, arrives damaged, arrives 7+ days after the maximum estimated delivery date window, or differs significantly from the description. SELLER (contrast): Etsy covers up to $250 of a refund (or the converted equivalent); any remaining amount is charged to the seller, who does not need to issue the refund.
+
+   ▶ run: audience=buyer   (tính điểm)
+     1. score=+0.829  buyer-purchase-protection#0      doc=buyer-purchase-protection   aud=buyer
+        “Etsy Purchase Protection Program › Qualifying order issues Etsy’s Purchase Protection program provides a full …”
+     2. score=+0.799  buyer-purchase-protection#2      doc=buyer-purchase-protection   aud=buyer
+        “Etsy Purchase Protection Program › How do I get my refund? The first step is to reach out to the seller by sta…”
+     3. score=+0.795  buyer-help-order#2               doc=buyer-help-order            aud=buyer
+        “How to Get Help with An Order › To get help with an order The seller can usually answer questions about your o…”
+     chấm doc-level (doc_id gold): top-1   |   content-level (marker ['full refund']): top-1   →  2/2 điểm
+     agent: [stub-LLM — trích nguyên văn đoạn [1], nguồn buyer-purchase-protection, audience=buyer] Etsy Purchase Protection Program › Qualifying order issues Etsy’s Purchase Protection program provides a full refund for qualifying orders when an item: - Doesn’t arrive. - Arrives damaged. - Arrives 7+ days afte…
+
+   ▶ run: no filter
+     1. score=+0.847  seller-purchase-protection#0     doc=seller-purchase-protection  aud=seller
+        “Purchase Protection for Sellers If an order is eligible for Etsy Purchase Protection, Etsy covers up to $250 o…”
+     2. score=+0.842  seller-returns-refunds#2         doc=seller-returns-refunds      aud=seller
+        “Refunds Returns and Exchanges for Sellers › Etsy Purchase Protection If an order is eligible for Etsy Purchase…”
+     3. score=+0.829  buyer-purchase-protection#0      doc=buyer-purchase-protection   aud=buyer
+        “Etsy Purchase Protection Program › Qualifying order issues Etsy’s Purchase Protection program provides a full …”
+     chấm doc-level (doc_id gold): top-1   |   content-level (marker ['full refund', '$250']): top-1   →  2/2 điểm
+
+   ▶ run: audience=seller
+     1. score=+0.847  seller-purchase-protection#0     doc=seller-purchase-protection  aud=seller
+        “Purchase Protection for Sellers If an order is eligible for Etsy Purchase Protection, Etsy covers up to $250 o…”
+     2. score=+0.842  seller-returns-refunds#2         doc=seller-returns-refunds      aud=seller
+        “Refunds Returns and Exchanges for Sellers › Etsy Purchase Protection If an order is eligible for Etsy Purchase…”
+     3. score=+0.798  seller-purchase-protection#2     doc=seller-purchase-protection  aud=seller
+        “Purchase Protection for Sellers › How do I qualify? Etsy Purchase Protection automatically covers qualifying o…”
+     chấm doc-level (doc_id gold): top-1   |   content-level (marker ['$250']): top-1   →  2/2 điểm
+     agent: [stub-LLM — trích nguyên văn đoạn [1], nguồn seller-purchase-protection, audience=seller] Purchase Protection for Sellers If an order is eligible for Etsy Purchase Protection, Etsy covers up to $250 of a refund, or the converted equivalent in the seller’s local currency. Any remaining amount is char…
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Q4 [formula] Which components are used to calculate an Etsy estimated delivery date?
+   gold: Processing time plus carrier transit time equals the estimated delivery date.
+
+   ▶ run: audience=buyer   (tính điểm)
+     1. score=+0.820  buyer-estimated-delivery#2       doc=buyer-estimated-delivery    aud=buyer
+        “What is an Estimated Delivery Date? › How do I see the estimated delivery date before purchasing? On Etsy.com:…”
+     2. score=+0.805  buyer-estimated-delivery#1       doc=buyer-estimated-delivery    aud=buyer
+        “What is an Estimated Delivery Date? › How is the estimated delivery date calculated? The estimated delivery da…”
+     3. score=+0.768  buyer-estimated-delivery#3       doc=buyer-estimated-delivery    aud=buyer
+        “What is an Estimated Delivery Date? › How do I see my order’s estimated delivery date? On Etsy.com: 1. Sign in…”
+     chấm doc-level (doc_id gold): top-1   |   content-level (marker ['carrier transit time']): top-2   →  1/2 điểm
+     agent: [stub-LLM — trích nguyên văn đoạn [1], nguồn buyer-estimated-delivery, audience=buyer] What is an Estimated Delivery Date? › How do I see the estimated delivery date before purchasing? On Etsy.com: 1. Select an item. 2. Scroll to Shipping and return policies. 3. Find Order today to get by with a dat…
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Q5 [numeric + procedure] How can a seller issue a full or partial refund, and what is the Etsy Payments time limit?
+   gold: The seller uses Shop Manager to issue the refund; Etsy Payments refunds can be issued after processing and before 180 days have passed.
+
+   ▶ run: audience=seller   (tính điểm)
+     1. score=+0.858  seller-issue-refund#6            doc=seller-issue-refund         aud=seller
+        “How to Issue a Full or Partial Refund For an Order › When can I issue a refund? If you use Etsy Payments, you …”
+     2. score=+0.791  seller-issue-refund#1            doc=seller-issue-refund         aud=seller
+        “How to Issue a Full or Partial Refund For an Order › To refund an order 1. On Etsy.com, open Shop Manager. 2. …”
+     3. score=+0.770  seller-issue-refund#4            doc=seller-issue-refund         aud=seller
+        “How to Issue a Full or Partial Refund For an Order › Will Etsy refund my seller fees? If you refund a buyer th…”
+     chấm doc-level (doc_id gold): top-1   |   content-level (marker ['180 days']): top-1   →  2/2 điểm
+     agent: [stub-LLM — trích nguyên văn đoạn [1], nguồn seller-issue-refund, audience=seller] How to Issue a Full or Partial Refund For an Order › When can I issue a refund? If you use Etsy Payments, you can issue a refund after the payment is processed and before 180 days after the payment is processed. After…
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+TỔNG KẾT (run tính điểm của mỗi query) — strategy=heading, embedder=gemini-embedding-001
+ Q  filter            doc-level  content-level   điểm
+ 1  audience=buyer        top-1          top-3    1/2
+ 2  audience=seller       top-1          top-1    2/2
+ 3  audience=buyer        top-1          top-1    2/2
+ 4  audience=buyer        top-1          top-2    1/2
+ 5  audience=seller       top-1          top-1    2/2
+    TỔNG                                          8/10
+
+(embedding cache: 8 hit / 59 miss → .embedding_cache.json)
